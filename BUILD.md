@@ -1,12 +1,13 @@
-# 编译说明
+# Build Instructions
 
-### 依赖的第三方库下载
+### Third-Party Dependency Downloads
 
-1. 下载opencv，[下载地址](https://github.com/RapidAI/OpenCVBuilder/releases)
+1. Download OpenCV: [Download link](https://github.com/RapidAI/OpenCVBuilder/releases)
 
-* OpenCV静态库：opencv-(版本号)-平台.7z，
-* 把压缩包解压到项目根目录，windows平台需要注意目录层次，解压后目录结构如下
-* windows平台分为mt和md版，mt代表静态链接CRT，md代表动态链接CRT
+- OpenCV static library: opencv-(version)-(platform).7z
+- Extract the archive to the project root directory. On Windows, pay attention to the folder structure. After extraction, the structure should look like this:
+- On Windows, there are mt and md versions: mt means static CRT linkage, md means dynamic CRT linkage.
+
 ```
 opencv-static
 ├── OpenCVWrapperConfig.cmake
@@ -16,102 +17,99 @@ opencv-static
 └── windows-x86
 ```
 
-2. 下载onnxruntime，[下载地址](https://github.com/RapidAI/OnnxruntimeBuilder/releases)
+2. Download onnxruntime: [Download link](https://github.com/RapidAI/OnnxruntimeBuilder/releases)
 
-* static为静态库：onnxruntime-(版本号)-平台-static.7z
-* shared为动态库：onnxruntime-(版本号)-平台-shared.7z
-* 一般情况下使用静态库即可
-* 把压缩包解压到项目根目录，windows平台需要注意目录层次，解压后目录结构如下
-* windows平台分为mt和md版，mt代表静态链接CRT，md代表动态链接CRT
+- static is the static library: onnxruntime-(version)-(platform)-static.7z
+- shared is the dynamic library: onnxruntime-(version)-(platform)-shared.7z
+- Usually, use the static library.
+- Extract the archive to the project root directory. On Windows, pay attention to the folder structure. After extraction, the structure should look like this:
+- On Windows, there are mt and md versions: mt means static CRT linkage, md means dynamic CRT linkage.
+
 ```
 onnxruntime-static
-├── OnnxRuntimeWrapper.cmake
+├── OnnxRuntimeWrapperConfig.cmake
 ├── linux
 ├── macos
 ├── windows-x64
 └── windows-x86
-
 ```
 
-
-### 编译环境
+### Build Environment
 
 1. Windows 10 x64
 2. macOS 10.15
-3. Linux Ubuntu 1804 x64
+3. Linux Ubuntu 18.04 x64
 
-**注意：以下说明仅适用于本机编译。如果需要交叉编译为arm等其它平台(参考android)，则需要先交叉编译所有第三方依赖库(ncnn、opencv)，然后再把依赖库整合替换到本项目里。**
+**Note: The following instructions are for native compilation. If you need to cross-compile for ARM or other platforms (see Android as reference), you must first cross-compile all third-party dependencies (ncnn, opencv), then integrate and replace the dependencies in this project.**
 
-### Windows编译说明
+### Windows Build Instructions
 
-#### 注意:从OnnxRuntime 1.7.0 ，只支持vs2019编译环境
+#### Note: From OnnxRuntime 1.7.0, only VS2019 is supported for building.
 
-#### Windows nmake编译
+#### Windows nmake Build
 
-1. 安装VS2019，安装时，至少选中'使用C++的桌面开发'
-2. cmake>=3.12请自行下载&配置，[下载地址](https://cmake.org/download/)
-3. 开始菜单打开"x64 Native Tools Command Prompt for VS 2019"或"适用于 VS2017 的 x64 本机工具"，并转到本项目根目录
-4. 运行```build.bat```并按照提示输入选项，最后选择'BIN可执行文件'
-5. 编译完成后运行```run-test.bat```进行测试(注意修改脚本内的目标图片路径)
-6. 编译JNI动态运行库(可选，可用于java调用)
+1. Install VS2019, and select at least "Desktop development with C++" during installation.
+2. Download and configure cmake >= 3.12: [Download link](https://cmake.org/download/)
+3. Open "x64 Native Tools Command Prompt for VS 2019" (or VS2017 x64 tools) and navigate to the project root.
+4. Run `build.bat` and follow the prompts, finally select 'BIN executable'.
+5. After building, run `run-test.bat` to test (remember to edit the target image path in the script).
+6. Build JNI dynamic library (optional, for Java usage).
 
-* 下载jdk-8u221-windows-x64.exe，安装选项默认(确保“源代码”项选中)，安装完成后，打开“系统”属性->高级->环境变量
-* 新建“系统变量”，变量名```JAVA_HOME``` ，变量值```C:\Program Files\Java\jdk1.8.0_221``
-* 新建“系统变量”，变量名```CLASSPATH``` ，变量值```.;%JAVA_HOME%\lib\dt.jar;%JAVA_HOME%\lib\tools.jar;``
-* 编辑“系统变量”Path，Win7在变量值头部添加```%JAVA_HOME%\bin;``` ，win10直接添加一行```%JAVA_HOME%\bin```
-* 开始菜单打开"x64 Native Tools Command Prompt for VS 2019"或"适用于 VS2017 的 x64 本机工具"，并转到本项目根目录
-* 运行```build.bat```并按照提示输入选项，最后选择'JNI动态库'
+- Download jdk-8u221-windows-x64.exe, use default install options (make sure "Source Code" is selected). After installation, open "System Properties" -> Advanced -> Environment Variables.
+- Add a new system variable: `JAVA_HOME` with value `C:\Program Files\Java\jdk1.8.0_221`
+- Add a new system variable: `CLASSPATH` with value `.;%JAVA_HOME%\lib\dt.jar;%JAVA_HOME%\lib\tools.jar;`
+- Edit the system variable `Path`: On Win7, add `%JAVA_HOME%\bin;` at the beginning; on Win10, add a new line `%JAVA_HOME%\bin`
+- Open "x64 Native Tools Command Prompt for VS 2019" (or VS2017 x64 tools) and navigate to the project root.
+- Run `build.bat` and follow the prompts, finally select 'JNI dynamic library'.
 
-#### Windows Visual Studio编译说明
+#### Windows Visual Studio Build Instructions
 
-1. VS2019，cmake……等安装配置参考上述步骤。
-2. 运行generate-vs-project.bat，输入数字选择要生成的visual studio项目解决方案版本。
-3. 根据你的编译环境，进入build-xxxx-x86或x64文件夹，打开RapidOcrOnnx.sln。
-4. 在顶部工具栏选择Release，在右边的"解决方案"窗口，右键选中"ALL_BUILD"->生成。要选择Debug，则您必须自行编译Debug版的opencv和onnxruntime。
+1. VS2019, cmake, etc. should be installed/configured as above.
+2. Run `generate-vs-project.bat`, enter the number to select the Visual Studio solution version to generate.
+3. According to your build environment, go to the build-xxxx-x86 or x64 folder and open RapidOcrOnnx.sln.
+4. In the top toolbar, select Release. In the right "Solution" window, right-click "ALL_BUILD" -> Build. If you want Debug, you must build Debug versions of OpenCV and onnxruntime yourself.
 
-#### Windows部署说明
+#### Windows Deployment Instructions
 
-1. 如果有依赖的库是动态库时，部署的时候记得把dll复制到可执行文件目录。
-2. 部署时如果提示缺少"VCRUNTIME140_1.dll"，下载安装适用于 Visual Studio 2015、2017 和 2019 的 Microsoft Visual C++ 可再发行软件包，
-   [下载地址](https://support.microsoft.com/zh-cn/help/2977003/the-latest-supported-visual-c-downloads)
+1. If any dependencies are dynamic libraries, remember to copy the DLLs to the executable directory when deploying.
+2. If you get a missing "VCRUNTIME140_1.dll" error, install the Microsoft Visual C++ Redistributable for Visual Studio 2015, 2017, and 2019: [Download link](https://support.microsoft.com/en-us/help/2977003/the-latest-supported-visual-c-downloads)
 
-### macOS编译说明
+### macOS Build Instructions
 
-1. macOS Catalina 10.15.x，安装Xcode>=12，并安装Xcode Command Line Tools, 终端运行```xcode-select –install```
-2. 自行下载安装HomeBrew，cmake >=3.19[下载地址](https://cmake.org/download/)
-3. libomp: ```brew install libomp```
-4. 终端打开项目根目录，```./build.sh```并按照提示输入选项，最后选择'BIN可执行文件'
-5. 测试：```./run-test.sh```(注意修改脚本内的目标图片路径)
-6. 编译JNI动态运行库(可选，可用于java调用)
+1. macOS Catalina 10.15.x, install Xcode >= 12 and Xcode Command Line Tools: run `xcode-select –install` in terminal.
+2. Download and install HomeBrew, cmake >= 3.19: [Download link](https://cmake.org/download/)
+3. Install libomp: `brew install libomp`
+4. Open terminal in project root, run `./build.sh` and follow the prompts, finally select 'BIN executable'.
+5. Test: `./run-test.sh` (remember to edit the target image path in the script).
+6. Build JNI dynamic library (optional, for Java usage).
 
-* 下载jdk-8u221-macosx-x64.dmg，安装。
-* 编辑用户目录下的隐藏文件```.zshrc``` ，添加```export JAVA_HOME=$(/usr/libexec/java_home)```
-* 运行```build.sh```并按照提示输入选项，最后选择'JNI动态库'
+- Download jdk-8u221-macosx-x64.dmg and install.
+- Edit the hidden file `.zshrc` in your user directory, add `export JAVA_HOME=$(/usr/libexec/java_home)`
+- Run `build.sh` and follow the prompts, finally select 'JNI dynamic library'.
 
-#### macOS部署说明
+#### macOS Deployment Instructions
 
-如果有依赖的库是动态库时，参考下列方法：
+If any dependencies are dynamic libraries, refer to the following methods:
 
-* 把动态库所在路径加入DYLD_LIBRARY_PATH搜索路径
-* 把动态库复制或链接到到/usr/lib
+- Add the dynamic library path to DYLD_LIBRARY_PATH
+- Copy or link the dynamic library to /usr/lib
 
-### Linux编译说明
+### Linux Build Instructions
 
-1. Ubuntu18.04 LTS 其它发行版(请自行编译依赖库opencv和onnxruntime，或自行适配官方发布的动态库)
-2. ```sudo apt-get install build-essential```
-3. g++>=5，cmake>=3.17[下载地址](https://cmake.org/download/)
-4. 终端打开项目根目录，```./build.sh```并按照提示输入选项，最后选择'BIN可执行文件'
-5. 测试：```./run-test.sh```(注意修改脚本内的目标图片路径)
-6. 编译JNI动态运行库(可选，可用于java调用)
+1. Ubuntu 18.04 LTS or other distributions (please build OpenCV and onnxruntime dependencies yourself, or adapt official dynamic libraries)
+2. `sudo apt-get install build-essential`
+3. g++ >= 5, cmake >= 3.17: [Download link](https://cmake.org/download/)
+4. Open terminal in project root, run `./build.sh` and follow the prompts, finally select 'BIN executable'.
+5. Test: `./run-test.sh` (remember to edit the target image path in the script).
+6. Build JNI dynamic library (optional, for Java usage).
 
-* 下载jdk-8u221并安装配置
-* 运行```build.sh```并按照提示输入选项，最后选择'JNI动态库'
-* **注意：编译JNI时，g++版本要求>=6**
+- Download jdk-8u221 and install/configure
+- Run `build.sh` and follow the prompts, finally select 'JNI dynamic library'.
+- **Note: g++ version >= 6 is required for JNI compilation.**
 
-#### Linux部署说明
+#### Linux Deployment Instructions
 
-有依赖的库是动态库时，参考下列方法：
+If any dependencies are dynamic libraries, refer to the following methods:
 
-* 把动态库所在路径加入LD_LIBRARY_PATH搜索路径
-* 把动态库复制或链接到到/usr/lib
-
+- Add the dynamic library path to LD_LIBRARY_PATH
+- Copy or link the dynamic library to /usr/lib
