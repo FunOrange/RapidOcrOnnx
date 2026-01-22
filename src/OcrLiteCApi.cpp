@@ -23,7 +23,12 @@ OcrInit(const char *szDetModel, const char *szClsModel, const char *szRecModel, 
     } else {
         return nullptr;
     }
+}
 
+_QM_OCR_API void OcrSetGpuIndex(OCR_HANDLE handle, int gpuIndex) {
+    OCR_OBJ *pOcrObj = (OCR_OBJ *) handle;
+    if (!pOcrObj) return;
+    pOcrObj->OcrObj.setGpuIndex(gpuIndex);
 }
 
 _QM_OCR_API OCR_BOOL

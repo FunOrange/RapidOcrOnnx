@@ -30,21 +30,20 @@ else ()
     add_definitions("-Wall")
 endif ()
 
-# OnnxRuntime
+# OnnxRuntime (manual linking for prebuilt binaries)
 if (OCR_ONNX STREQUAL "CPU")
-    include(${CMAKE_CURRENT_SOURCE_DIR}/onnxruntime-static/OnnxRuntimeWrapper.cmake)
+    set(ONNXRUNTIME_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/onnxruntime-static/windows-x64/include")
+    set(ONNXRUNTIME_LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/onnxruntime-static/windows-x64/lib")
 elseif (OCR_ONNX STREQUAL "CUDA") # CUDA
-    include(${CMAKE_CURRENT_SOURCE_DIR}/onnxruntime-gpu/OnnxRuntimeWrapper.cmake)
+    set(ONNXRUNTIME_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/onnxruntime-gpu/windows-x64/include")
+    set(ONNXRUNTIME_LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/onnxruntime-gpu/windows-x64/lib")
 elseif (OCR_ONNX STREQUAL "DIRECTML") # DIRECTML
-    include(${CMAKE_CURRENT_SOURCE_DIR}/onnxruntime-DirectML/OnnxRuntimeWrapper.cmake)
+    set(ONNXRUNTIME_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/onnxruntime-DirectML/windows-x64/include")
+    set(ONNXRUNTIME_LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/onnxruntime-DirectML/windows-x64/lib")
 endif ()
-find_package(OnnxRuntime REQUIRED)
-if (OnnxRuntime_FOUND)
-    message(STATUS "OnnxRuntime_LIBS: ${OnnxRuntime_LIBS}")
-    message(STATUS "OnnxRuntime_INCLUDE_DIRS: ${OnnxRuntime_INCLUDE_DIRS}")
-else ()
-    message(FATAL_ERROR "onnxruntime Not Found!")
-endif (OnnxRuntime_FOUND)
+include_directories(${ONNXRUNTIME_INCLUDE_DIR})
+link_directories(${ONNXRUNTIME_LIB_DIR})
+set(ONNXRUNTIME_LIBS onnxruntime)
 
 # OpenCV
 set(BUILD_SHARED_LIBS false)
@@ -80,15 +79,15 @@ endif ()
 if (OCR_OUTPUT STREQUAL "JNI") # JNI
     add_library(RapidOcrOnnx SHARED ${OCR_COMPILE_CODE})
     target_compile_definitions(RapidOcrOnnx PRIVATE __JNI__)
-    target_link_libraries(RapidOcrOnnx ${OnnxRuntime_LIBS} ${OpenCV_LIBS} ${JNI_LIBS})
+    target_link_libraries(RapidOcrOnnx ${ONNXRUNTIME_LIBS} ${OpenCV_LIBS} ${JNI_LIBS})
 elseif (OCR_OUTPUT STREQUAL "CLIB") # CLIB
     add_library(RapidOcrOnnx SHARED ${OCR_COMPILE_CODE})
     target_compile_definitions(RapidOcrOnnx PRIVATE __CLIB__)
-    target_link_libraries(RapidOcrOnnx ${OnnxRuntime_LIBS} ${OpenCV_LIBS})
+    target_link_libraries(RapidOcrOnnx ${ONNXRUNTIME_LIBS} ${OpenCV_LIBS})
 elseif (OCR_OUTPUT STREQUAL "BIN") # BIN
     add_executable(RapidOcrOnnx ${OCR_COMPILE_CODE})
     target_compile_definitions(RapidOcrOnnx PRIVATE __EXEC__)
-    target_link_libraries(RapidOcrOnnx ${OnnxRuntime_LIBS} ${OpenCV_LIBS})
+    target_link_libraries(RapidOcrOnnx ${ONNXRUNTIME_LIBS} ${OpenCV_LIBS})
 endif ()
 
 install(TARGETS RapidOcrOnnx EXPORT RapidOcrOnnx)
@@ -114,7 +113,7 @@ if (OCR_BENCHMARK AND (OCR_OUTPUT STREQUAL "BIN"))
             src/OcrLiteImpl.cpp
             src/OcrLite.cpp
             src/OcrUtils.cpp)
-    target_link_libraries(benchmark ${OnnxRuntime_LIBS} ${OpenCV_LIBS})
+    target_link_libraries(benchmark ${ONNXRUNTIME_LIBS} ${OpenCV_LIBS})
     target_compile_definitions(benchmark PRIVATE __EXEC__)
 
     if (OCR_ONNX STREQUAL "CUDA")

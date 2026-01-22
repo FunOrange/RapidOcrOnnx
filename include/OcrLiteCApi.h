@@ -1,9 +1,9 @@
-#ifdef __cplusplus
-#ifndef __OCR_LITE_C_API_H__
-#define __OCR_LITE_C_API_H__
-#include "stdint.h"
-extern "C"
-{
+ #ifdef __cplusplus
+ #ifndef __OCR_LITE_C_API_H__
+ #define __OCR_LITE_C_API_H__
+ #include "stdint.h"
+ extern "C"
+ {
 
 #ifdef WIN32
 #ifdef __CLIB__
@@ -71,6 +71,9 @@ By default, nThreads should be the number of threads
 */
 _QM_OCR_API OCR_HANDLE
 OcrInit(const char *szDetModel, const char *szClsModel, const char *szRecModel, const char *szKeyPath, int nThreads);
+
+// Set the GPU index for the OCR handle. Pass -1 to disable GPU, 0 for GPU0, etc.
+_QM_OCR_API void OcrSetGpuIndex(OCR_HANDLE handle, int gpuIndex);
 
 _QM_OCR_API OCR_BOOL
 OcrDetect(OCR_HANDLE handle, const char *imgPath, const char *imgName, OCR_PARAM *pParam);
