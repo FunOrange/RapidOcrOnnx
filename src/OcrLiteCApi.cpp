@@ -54,11 +54,11 @@ OcrDetect(OCR_HANDLE handle, const char *imgPath, const char *imgName, OCR_PARAM
     if (Param.unClipRatio == 0)
         Param.unClipRatio = 2.0;
 
-    if (Param.doAngle == 0)
-        Param.doAngle = 1;
+    // if (Param.doAngle == 0)
+    //     Param.doAngle = 1;
 
-    if (Param.mostAngle == 0)
-        Param.mostAngle = 1;
+    // if (Param.mostAngle == 0)
+    //     Param.mostAngle = 1;
 
     OcrResult result = pOcrObj->OcrObj.detect(imgPath, imgName, Param.padding, Param.maxSideLen,
                                               Param.boxScoreThresh, Param.boxThresh, Param.unClipRatio,
@@ -93,11 +93,12 @@ OcrDetectInput(OCR_HANDLE handle, OCR_INPUT *input, OCR_PARAM *pParam, OCR_RESUL
     if (Param.unClipRatio == 0)
         Param.unClipRatio = 2.0;
 
-    if (Param.doAngle == 0)
-        Param.doAngle = 1;
+    // if (Param.doAngle == 0)
+    //     Param.doAngle = 1;
 
-    if (Param.mostAngle == 0)
-        Param.mostAngle = 1;
+    // if (Param.mostAngle == 0)
+    //     Param.mostAngle = 1;
+
     OcrResult result;
     if(input->dataLength == 0) {
         return FALSE;
